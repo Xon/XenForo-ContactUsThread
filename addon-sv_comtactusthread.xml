@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.0" version_id="10000" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_ContactUsThread_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Misc" description=""/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <group group_id="sv_comtactusthread" display_order="52" debug_only="0"/>
+    <option option_id="sv_contactusthread_node" edit_format="callback" data_type="unsigned_integer" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params>XenForo_Option_ForumChooser::renderOption</edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="emailOptions" display_order="800"/>
+      <relation group_id="sv_comtactusthread" display_order="10"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="ContactUs_Message_Guest" version_id="10000" version_string="1.0.0"><![CDATA[[plain]
+{message}
+[/plain]
+
+Email: {email}]]></phrase>
+    <phrase title="ContactUs_Message_User" version_id="10000" version_string="1.0.0"><![CDATA[[plain]
+{message}
+[/plain]]]></phrase>
+    <phrase title="option_group_sv_comtactusthread" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Thread]]></phrase>
+    <phrase title="option_group_sv_comtactusthread_description" version_id="10000" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="option_sv_contactusthread_node" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Forum]]></phrase>
+    <phrase title="option_sv_contactusthread_node_explain" version_id="10000" version_string="1.0.0"><![CDATA[The forum to create threads for each Contact Us request]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates/>
+  <public_template_modifications/>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
