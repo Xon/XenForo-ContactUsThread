@@ -28,6 +28,7 @@
     <interface_groups/>
   </permissions>
   <phrases>
+    <phrase title="ContactUs_Guest" version_id="10000" version_string="1.0.0"><![CDATA[{username} (Guest)]]></phrase>
     <phrase title="ContactUs_Message_Guest" version_id="10000" version_string="1.0.0"><![CDATA[[plain]
 {message}
 [/plain]

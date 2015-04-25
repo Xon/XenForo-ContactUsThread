@@ -23,61 +23,61 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
 
         if ($this->_request->isPost())
         {
-            $user = XenForo_Visitor::getInstance()->toArray();
-            $username = $user['username'];
-            if(empty($user['user_id']))
+            $nodeId = $options->sv_contactusthread_node;
+            if (!empty($nodeId))
             {
-                try
+                $user = XenForo_Visitor::getInstance()->toArray();
+                $username = $user['username'];
+                if(empty($user['user_id']))
                 {
-                    $this->_verifyUsername($username);
-                }
-                catch(XenForo_Exception $e)
-                {
-                    $username = $username . ' (Guest)';
-                    $this->_verifyUsername($username);
+                    try
+                    {
+                        $this->_verifyUsername($username);
+                    }
+                    catch(XenForo_Exception $e)
+                    {
+                        $username = new XenForo_Phrase('ContactUs_Guest', array('username' => $username));
+                        $this->_verifyUsername($username);
+                    }
                 }
             }
         }
 
         $parent = parent::actionContact();
 
-        if ($this->_request->isPost() && $parent instanceof XenForo_ControllerResponse_Redirect)
+        if (!empty($nodeId) && $this->_request->isPost() && $parent instanceof XenForo_ControllerResponse_Redirect)
         {
-            $nodeId = $options->sv_contactusthread_node;
-            if ($nodeId)
+            $input = $this->_input->filter(array(
+                'subject' => XenForo_Input::STRING,
+                'message' => XenForo_Input::STRING,
+                'email' => XenForo_Input::STRING,
+            ));
+            $input['ip'] = $this->_request->getClientIp(false);
+            $input['username'] = $user['username'];
+
+            $db = XenForo_Application::getDb();
+
+            if(empty($user['user_id']))
             {
-                $input = $this->_input->filter(array(
-                    'subject' => XenForo_Input::STRING,
-                    'message' => XenForo_Input::STRING,
-                    'email' => XenForo_Input::STRING,
-                ));
-                $input['ip'] = $this->_request->getClientIp(false);
-                $input['username'] = $user['username'];
-
-                $db = XenForo_Application::getDb();
-
-                if(empty($user['user_id']))
-                {
-                    $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input);
-                }
-                else
-                {
-                    $message = new XenForo_Phrase('ContactUs_Message_User', $input);
-                }
-
-                $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
-                $threadDw->bulkSet(array(
-                    'user_id' => $user['user_id'],
-                    'username' => $username,
-                    'title' => $input['subject'],
-                    'node_id' => $nodeId,
-                    'discussion_state' => 'visible'
-                ));
-
-                $postWriter = $threadDw->getFirstMessageDw();
-                $postWriter->set('message', $message);
-                $threadDw->save();
+                $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input);
             }
+            else
+            {
+                $message = new XenForo_Phrase('ContactUs_Message_User', $input);
+            }
+
+            $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
+            $threadDw->bulkSet(array(
+                'user_id' => $user['user_id'],
+                'username' => $username,
+                'title' => $input['subject'],
+                'node_id' => $nodeId,
+                'discussion_state' => 'visible'
+            ));
+
+            $postWriter = $threadDw->getFirstMessageDw();
+            $postWriter->set('message', $message);
+            $threadDw->save();
         }
         return $parent;
     }
