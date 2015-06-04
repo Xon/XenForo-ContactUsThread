@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.0" version_id="10000" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.1" version_id="10010" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -45,7 +45,12 @@ Email: {email}]]></phrase>
   <route_prefixes/>
   <style_properties/>
   <templates/>
-  <public_template_modifications/>
+  <public_template_modifications>
+    <modification template="contact" modification_key="sv_contactusthread_contact" description="" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<form action="{xen:link 'misc/contact'}"]]></find>
+      <replace><![CDATA[$0 data-redirect="on"]]></replace>
+    </modification>
+  </public_template_modifications>
   <bb_code_media_sites/>
   <bb_codes/>
 </addon>
