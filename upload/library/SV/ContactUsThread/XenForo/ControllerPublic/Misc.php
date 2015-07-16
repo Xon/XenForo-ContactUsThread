@@ -21,25 +21,25 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             );
         }
 
+        $nodeId = 0;
+        $default_prefix_id = 0;
         if ($this->_request->isPost())
         {
             $nodeId = $options->sv_contactusthread_node;
+            $forum = $this->_getForumModel()->getForumById($nodeId);
+            if (empty($forum))
+            {
+                $nodeId = 0;
+            }
             if (!empty($nodeId))
             {
                 $user = XenForo_Visitor::getInstance()->toArray();
                 $username = $user['username'];
                 if(empty($user['user_id']))
                 {
-                    try
-                    {
-                        $this->_verifyUsername($username);
-                    }
-                    catch(XenForo_Exception $e)
-                    {
-                        $username = new XenForo_Phrase('ContactUs_Guest', array('username' => $username));
-                        $this->_verifyUsername($username);
-                    }
+                    $this->_verifyUsername($username);
                 }
+                $default_prefix_id = $forum['default_prefix_id'];
             }
         }
 
@@ -67,15 +67,18 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             }
 
             $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
+            $threadDw->setOption(XenForo_DataWriter_Discussion::OPTION_TRIM_TITLE, true);
             $threadDw->bulkSet(array(
                 'user_id' => $user['user_id'],
                 'username' => $username,
                 'title' => $input['subject'],
                 'node_id' => $nodeId,
-                'discussion_state' => 'visible'
+                'discussion_state' => 'visible',
+                'prefix_id' => $default_prefix_id,
             ));
 
             $postWriter = $threadDw->getFirstMessageDw();
+            $postWriter->setOption(XenForo_DataWriter_DiscussionMessage::OPTION_VERIFY_GUEST_USERNAME, false);
             $postWriter->set('message', $message);
             $threadDw->save();
         }
@@ -170,27 +173,10 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         {
             throw new XenForo_Exception(new XenForo_Phrase('please_enter_name_that_does_not_resemble_an_email_address'), true);
         }
-
-        $existingUser = $this->_getUserModel()->getUserByName($username);
-        if ($existingUser)
-        {
-            throw new XenForo_Exception(new XenForo_Phrase('usernames_must_be_unique'), true);
-        }
-
-        // compare against romanized name to help reduce confusable issues
-        $romanized = utf8_deaccent(utf8_romanize($username));
-        if ($romanized != $username)
-        {
-            $existingUser = $this->_getUserModel()->getUserByName($romanized);
-            if ($existingUser)
-            {
-                throw new XenForo_Exception(new XenForo_Phrase('usernames_must_be_unique'), true);
-            }
-        }
     }
 
-    protected function _getUserModel()
+    protected function _getForumModel()
     {
-        return $this->getModelFromCache('XenForo_Model_User');
+        return $this->getModelFromCache('XenForo_Model_Forum');
     }
 }
