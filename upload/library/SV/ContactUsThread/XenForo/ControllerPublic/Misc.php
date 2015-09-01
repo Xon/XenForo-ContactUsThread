@@ -59,11 +59,11 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
 
             if(empty($user['user_id']))
             {
-                $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input);
+                $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input, false);
             }
             else
             {
-                $message = new XenForo_Phrase('ContactUs_Message_User', $input);
+                $message = new XenForo_Phrase('ContactUs_Message_User', $input, false);
             }
 
             $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
