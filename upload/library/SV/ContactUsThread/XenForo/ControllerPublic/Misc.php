@@ -2,6 +2,24 @@
 
 class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUsThread_XenForo_ControllerPublic_Misc
 {
+    var $action = null;
+
+    protected function _preDispatchFirst($action)
+    {
+        $this->action = strtolower($action);
+        parent::_preDispatchFirst($action);
+    }
+
+
+    protected function _assertNotBanned()
+    {
+        if ($this->action == 'contact' && XenForo_Application::getOptions()->sv_banned_user_can_use_contactus_form)
+        {
+            return;
+        }
+        parent::_assertNotBanned();
+    }
+
     public function actionContact()
     {
         $options = XenForo_Application::get('options');

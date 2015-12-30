@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.3" version_id="100030" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.4" version_id="1000400" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -14,6 +14,12 @@
   <email_template_modifications/>
   <optiongroups>
     <group group_id="sv_comtactusthread" display_order="52" debug_only="0"/>
+    <option option_id="sv_banned_user_can_use_contactus_form" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>1</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="sv_comtactusthread" display_order="110"/>
+    </option>
     <option option_id="sv_contactusthread_node" edit_format="callback" data_type="unsigned_integer" can_backup="1">
       <default_value>0</default_value>
       <edit_format_params>XenForo_Option_ForumChooser::renderOption</edit_format_params>
@@ -38,6 +44,8 @@ Email: {email}]]></phrase>
 [/plain]]]></phrase>
     <phrase title="option_group_sv_comtactusthread" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Thread]]></phrase>
     <phrase title="option_group_sv_comtactusthread_description" version_id="10000" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="option_sv_banned_user_can_use_contactus_form" version_id="1000400" version_string="1.0.4"><![CDATA[Allow Banned Users to use Contact Us]]></phrase>
+    <phrase title="option_sv_banned_user_can_use_contactus_form_explain" version_id="1000400" version_string="1.0.4"><![CDATA[]]></phrase>
     <phrase title="option_sv_contactusthread_node" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Forum]]></phrase>
     <phrase title="option_sv_contactusthread_node_explain" version_id="10000" version_string="1.0.0"><![CDATA[The forum to create threads for each Contact Us request]]></phrase>
   </phrases>
