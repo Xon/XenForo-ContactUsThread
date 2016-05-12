@@ -22,7 +22,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
 
     public function actionContact()
     {
-        $options = XenForo_Application::get('options');
+        $options = XenForo_Application::getOptions();
 
         if ($options->contactUrl['type'] == 'custom')
         {
@@ -44,7 +44,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         if ($this->_request->isPost())
         {
             $nodeId = $options->sv_contactusthread_node;
-            $forum = $this->_getForumModel()->getForumById($nodeId);
+            $forum = $nodeId ? null : $this->_getForumModel()->getForumById($nodeId);
             if (empty($forum))
             {
                 $nodeId = 0;
@@ -191,6 +191,36 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         {
             throw new XenForo_Exception(new XenForo_Phrase('please_enter_name_that_does_not_resemble_an_email_address'), true);
         }
+    }
+
+    public function assertNotFlooding($action, $floodingLimit = null)
+    {
+        if ($action == 'contact' && !XenForo_Visitor::getInstance()->hasPermission('general', 'bypassFloodCheck'))
+        {
+            $contactFloodingLimit = XenForo_Application::getOptions()->sv_contactusthread_ratelimit;
+            if (!$contactFloodingLimit)
+            {
+                $contactFloodingLimit = $floodingLimit;
+            }
+            $userId = XenForo_Visitor::getUserId();
+            if (!$userId)
+            {
+                // xf_flood_check.user_id is unsigned 32 bits integer.
+                // Use the IP address crc32'ed as a stand-in for the userid to fit into the field.
+                // set the high bit to ensure it is unlikely to cause a collision with a valid user
+                $userId = crc32(XenForo_Helper_Ip::getBinaryIp(null, null)) | (1 << 31);
+            }
+
+            $floodTimeRemaining = XenForo_Model_FloodCheck::checkFlooding($action, $contactFloodingLimit, $userId);
+            if ($floodTimeRemaining)
+            {
+                throw $this->responseException(
+                    $this->responseFlooding($floodTimeRemaining)
+                );
+            }
+            return;
+        }
+        parent::assertNotFlooding($action, $floodingLimit);
     }
 
     protected function _getForumModel()
