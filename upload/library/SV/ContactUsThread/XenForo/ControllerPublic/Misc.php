@@ -44,7 +44,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         if ($this->_request->isPost())
         {
             $nodeId = $options->sv_contactusthread_node;
-            $forum = $nodeId ? null : $this->_getForumModel()->getForumById($nodeId);
+            $forum = $this->_getForumModel()->getForumById($nodeId);
             if (empty($forum))
             {
                 $nodeId = 0;
