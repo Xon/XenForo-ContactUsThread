@@ -73,6 +73,28 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             $input['ip'] = $this->_request->getClientIp(false);
             $input['username'] = $user['username'];
 
+            $spamTriggerLogLimit = XenForo_Application::getOptions()
+                ->sv_contactusthread_spamtriggerloglimit;
+
+            if ($spamTriggerLogLimit != 0)
+            {
+                $spamPreventionModel = $this->_getSpamPreventionModel();
+
+                $logs = $spamPreventionModel->prepareSpamTriggerLogs(
+                    $spamPreventionModel->getUserLogsByIpOrEmail(
+                        $input['ip'],
+                        $input['email'],
+                        $spamTriggerLogLimit
+                    )
+                );
+            }
+            else
+            {
+                $logs = array();
+            }
+
+            $input['spam_trigger_logs'] = $logs;
+
             $db = XenForo_Application::getDb();
 
             if(empty($user['user_id']))
@@ -226,5 +248,13 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
     protected function _getForumModel()
     {
         return $this->getModelFromCache('XenForo_Model_Forum');
+    }
+
+    /**
+     * @return XenForo_Model_SpamPrevention
+     */
+    protected function _getSpamPreventionModel()
+    {
+        return $this->getModelFromCache('XenForo_Model_SpamPrevention');
     }
 }
