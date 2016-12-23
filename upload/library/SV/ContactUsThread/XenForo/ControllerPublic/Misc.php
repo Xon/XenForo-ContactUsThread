@@ -93,7 +93,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                 $logs = array();
             }
 
-            $input['spam_trigger_logs'] = $logs;
+            $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
 
             $db = XenForo_Application::getDb();
 
@@ -243,6 +243,58 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             return;
         }
         parent::assertNotFlooding($action, $floodingLimit);
+    }
+
+    protected function _formatLogsForDisplay(array $logs)
+    {
+        if (!empty($logs))
+        {
+            $logOutput = "[LIST]\n";
+
+            foreach ($logs as $log)
+            {
+                $logOutput .= '[*]';
+
+                if ($log['username'])
+                {
+                    $logOutput .= "@{$log['username']} ";
+                }
+                else
+                {
+                    $logOutput .= new XenForo_Phrase('unknown_account').' ';
+                }
+
+                $logOutput .= ' - ';
+
+                if ($log['result'] ==  'denied')
+                {
+                    $result = new XenForo_Phrase('rejected');
+                }
+                elseif ($log['result'] == 'moderated')
+                {
+                    $result = new XenForo_Phrase('moderated');
+                }
+
+                $logOutput .= $result;
+
+                foreach ($log['detailsPrintable'] as $detail)
+                {
+                    $logOutput .= " ({$detail})";
+                }
+
+                $logOutput .= "\n";
+            }
+
+            $logOutput .= '[/LIST]';
+        }
+        else
+        {
+            $logOutput = new XenForo_Phrase(
+                'sv_contactusthread_no_matching_spam_trigger_logs'
+            );
+        }
+
+        return $logOutput;
     }
 
     protected function _getForumModel()

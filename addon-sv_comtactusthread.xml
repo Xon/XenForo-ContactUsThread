@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.7" version_id="1000700" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="sv_comtactusthread" title="Contact Us Thread" version_string="1.0.8" version_id="1000800" url="https://xenforo.com/community/resources/contact-us-thread.4220/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -8,6 +8,7 @@
   <code_events/>
   <code_event_listeners>
     <listener event_id="load_class_controller" execute_order="4220" callback_class="SV_ContactUsThread_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Misc" description="XenForo_ControllerPublic_Misc"/>
+    <listener event_id="load_class_model" execute_order="4220" callback_class="SV_ContactUsThread_Listener" callback_method="load_class" active="1" hint="XenForo_Model_SpamPrevention" description="XenForo_Model_SpamPrevention"/>
   </code_event_listeners>
   <cron/>
   <email_templates/>
@@ -33,6 +34,12 @@
       <sub_options></sub_options>
       <relation group_id="sv_comtactusthread" display_order="20"/>
     </option>
+    <option option_id="sv_contactusthread_spamtriggerloglimit" edit_format="spinbox" data_type="integer" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="sv_comtactusthread" display_order="30"/>
+    </option>
   </optiongroups>
   <permissions>
     <permission_groups/>
@@ -40,23 +47,33 @@
     <interface_groups/>
   </permissions>
   <phrases>
-    <phrase title="ContactUs_Message_Guest" version_id="10000" version_string="1.0.0"><![CDATA[[plain]
+    <phrase title="ContactUs_Message_Guest" version_id="1000800" version_string="1.0.8"><![CDATA[[plain]
 {message}
 [/plain]
 
-Email: {email}]]></phrase>
-    <phrase title="ContactUs_Message_User" version_id="10000" version_string="1.0.0"><![CDATA[[plain]
+Email: {email}
+
+Latest Spam Trigger Log Matches:
+{spam_trigger_logs}]]></phrase>
+    <phrase title="ContactUs_Message_User" version_id="1000800" version_string="1.0.8"><![CDATA[[plain]
 {message}
-[/plain]]]></phrase>
-    <phrase title="option_sv_contactusthread_ratelimit" version_id="1000500" version_string="1.0.5"><![CDATA[Rate Limit form usage]]></phrase>
-    <phrase title="option_sv_contactusthread_ratelimit_explain" version_id="1000500" version_string="1.0.5"><![CDATA[Use XenForo flood management to prevent multiple submission in a short time-window.<br/>
-0 to use XenForo's standard flood check length.]]></phrase>
+[/plain]
+
+Latest Spam Trigger Log Matches:
+{spam_trigger_logs}]]></phrase>
     <phrase title="option_group_sv_comtactusthread" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Thread]]></phrase>
     <phrase title="option_group_sv_comtactusthread_description" version_id="10000" version_string="1.0.0"><![CDATA[]]></phrase>
     <phrase title="option_sv_banned_user_can_use_contactus_form" version_id="1000400" version_string="1.0.4"><![CDATA[Allow Banned Users to use Contact Us]]></phrase>
     <phrase title="option_sv_banned_user_can_use_contactus_form_explain" version_id="1000400" version_string="1.0.4"><![CDATA[]]></phrase>
     <phrase title="option_sv_contactusthread_node" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Forum]]></phrase>
     <phrase title="option_sv_contactusthread_node_explain" version_id="10000" version_string="1.0.0"><![CDATA[The forum to create threads for each Contact Us request]]></phrase>
+    <phrase title="option_sv_contactusthread_ratelimit" version_id="1000500" version_string="1.0.5"><![CDATA[Rate Limit form usage]]></phrase>
+    <phrase title="option_sv_contactusthread_ratelimit_explain" version_id="1000500" version_string="1.0.5"><![CDATA[Use XenForo flood management to prevent multiple submission in a short time-window.<br/>
+0 to use XenForo's standard flood check length.]]></phrase>
+    <phrase title="option_sv_contactusthread_spamtriggerloglimit" version_id="1000700" version_string="1.0.7"><![CDATA[Matching Spam Trigger Log Limit]]></phrase>
+    <phrase title="option_sv_contactusthread_spamtriggerloglimit_explain" version_id="1000700" version_string="1.0.7"><![CDATA[The number of matching spam trigger logs to include in the post. Matches by IP and email address.<br>
+0 to disable.]]></phrase>
+    <phrase title="sv_contactusthread_no_matching_spam_trigger_logs" version_id="1000700" version_string="1.0.7"><![CDATA[No matching spam trigger logs were found.]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>
