@@ -73,10 +73,10 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             $input['ip'] = $this->_request->getClientIp(false);
             $input['username'] = $user['username'];
 
-            $spamTriggerLogLimit = XenForo_Application::getOptions()
-                ->sv_contactusthread_spamtriggerloglimit;
+            $spamTriggerLogDays = $options->sv_contactusthread_spamtriggerlogdays;
+            $spamTriggerLogLimit = $options->sv_contactusthread_spamtriggerloglimit;
 
-            if ($spamTriggerLogLimit != 0)
+            if ($spamTriggerLogDays != 0 && $spamTriggerLogLimit != 0)
             {
                 $spamPreventionModel = $this->_getSpamPreventionModel();
 
@@ -84,6 +84,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                     $spamPreventionModel->getUserLogsByIpOrEmail(
                         $input['ip'],
                         $input['email'],
+                        $spamTriggerLogDays,
                         $spamTriggerLogLimit
                     )
                 );
