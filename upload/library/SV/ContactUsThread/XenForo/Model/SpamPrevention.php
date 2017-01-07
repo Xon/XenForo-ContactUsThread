@@ -14,12 +14,12 @@ class SV_ContactUsThread_XenForo_Model_SpamPrevention extends XFCP_SV_ContactUsT
                     LEFT JOIN xf_user AS user ON (log.user_id = user.user_id)
                     WHERE log.content_type = 'user'
                         AND log.log_date > ?
-                        AND (log.ip_address = ? OR user.email = ?)
+                        AND (log.ip_address = ? OR user.email = ? OR log.details like ?)
                     ORDER BY log.log_date DESC",
                 $limit
             ),
             'trigger_log_id',
-            array($date, $ip, $email)
+            array($date, $ip, $email, '%'.$email.'%')
         );
     }
 }
