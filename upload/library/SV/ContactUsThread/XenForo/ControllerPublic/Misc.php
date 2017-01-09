@@ -275,6 +275,10 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                 {
                     $result = new XenForo_Phrase('moderated');
                 }
+                else
+                {
+                    $result = $log['result'];
+                }
 
                 $logOutput .= $result;
 
