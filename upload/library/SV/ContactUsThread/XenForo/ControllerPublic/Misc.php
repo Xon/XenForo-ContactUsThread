@@ -258,7 +258,8 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
 
             foreach ($logs as $log)
             {
-                $logOutput .= '[*]';
+                $time = XenForo_Locale::dateTime($log['log_date'], 'absolute');
+                $logOutput .= "[*]{$time}: ";
 
                 if ($log['username'])
                 {
