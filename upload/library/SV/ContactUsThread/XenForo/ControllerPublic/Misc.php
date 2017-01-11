@@ -71,7 +71,11 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                 'email' => XenForo_Input::STRING,
             ));
             $input['ip'] = $this->_request->getClientIp(false);
-            $input['username'] = $user['username'];
+            $input['username'] = $username;
+            if (!empty($user['user_id']))
+            {
+                $input['email'] = $user['email'];
+            }
 
             $spamTriggerLogDays = $options->sv_contactusthread_spamtriggerlogdays;
             $spamTriggerLogLimit = $options->sv_contactusthread_spamtriggerloglimit;
