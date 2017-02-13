@@ -65,69 +65,76 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
 
         if (!empty($nodeId) && $this->_request->isPost() && $parent instanceof XenForo_ControllerResponse_Redirect)
         {
-            $input = $this->_input->filter(array(
-                'subject' => XenForo_Input::STRING,
-                'message' => XenForo_Input::STRING,
-                'email' => XenForo_Input::STRING,
-            ));
-            $input['ip'] = $this->_request->getClientIp(false);
-            $input['username'] = $username;
-            if (!empty($user['user_id']))
-            {
-                $input['email'] = $user['email'];
-            }
-
-            $spamTriggerLogDays = $options->sv_contactusthread_spamtriggerlogdays;
-            $spamTriggerLogLimit = $options->sv_contactusthread_spamtriggerloglimit;
-
-            if ($spamTriggerLogDays != 0 && $spamTriggerLogLimit != 0)
-            {
-                $spamPreventionModel = $this->_getSpamPreventionModel();
-
-                $logs = $spamPreventionModel->prepareSpamTriggerLogs(
-                    $spamPreventionModel->getUserLogsByIpOrEmail(
-                        $input['ip'],
-                        $input['email'],
-                        $spamTriggerLogDays,
-                        $spamTriggerLogLimit
-                    )
-                );
-            }
-            else
-            {
-                $logs = array();
-            }
-
-            $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
-
-            $db = XenForo_Application::getDb();
-
-            if(empty($user['user_id']))
-            {
-                $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input, false);
-            }
-            else
-            {
-                $message = new XenForo_Phrase('ContactUs_Message_User', $input, false);
-            }
-
-            $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
-            $threadDw->setOption(XenForo_DataWriter_Discussion::OPTION_TRIM_TITLE, true);
-            $threadDw->bulkSet(array(
-                'user_id' => $user['user_id'],
-                'username' => $username,
-                'title' => $input['subject'],
-                'node_id' => $nodeId,
-                'discussion_state' => 'visible',
-                'prefix_id' => $default_prefix_id,
-            ));
-
-            $postWriter = $threadDw->getFirstMessageDw();
-            $postWriter->setOption(XenForo_DataWriter_DiscussionMessage::OPTION_VERIFY_GUEST_USERNAME, false);
-            $postWriter->set('message', $message);
-            $threadDw->save();
+            $this->sv_postThread($nodeId, $default_prefix_id, $user, $username);
         }
         return $parent;
+    }
+    
+    protected function sv_postThread($nodeId, $default_prefix_id, array $user, $username)
+    {
+        $options = XenForo_Application::getOptions();
+        $input = $this->_input->filter(array(
+            'subject' => XenForo_Input::STRING,
+            'message' => XenForo_Input::STRING,
+            'email' => XenForo_Input::STRING,
+        ));
+        $input['ip'] = $this->_request->getClientIp(false);
+        $input['username'] = $username;
+        if (!empty($user['user_id']))
+        {
+            $input['email'] = $user['email'];
+        }
+
+        $spamTriggerLogDays = $options->sv_contactusthread_spamtriggerlogdays;
+        $spamTriggerLogLimit = $options->sv_contactusthread_spamtriggerloglimit;
+
+        if ($spamTriggerLogDays != 0 && $spamTriggerLogLimit != 0)
+        {
+            $spamPreventionModel = $this->_getSpamPreventionModel();
+
+            $logs = $spamPreventionModel->prepareSpamTriggerLogs(
+                $spamPreventionModel->getUserLogsByIpOrEmail(
+                    $input['ip'],
+                    $input['email'],
+                    $spamTriggerLogDays,
+                    $spamTriggerLogLimit
+                )
+            );
+        }
+        else
+        {
+            $logs = array();
+        }
+
+        $input['spam_trigger_logs'] = $this->_formatLogsForDisplay($logs);
+
+        $db = XenForo_Application::getDb();
+
+        if(empty($user['user_id']))
+        {
+            $message =  new XenForo_Phrase('ContactUs_Message_Guest', $input, false);
+        }
+        else
+        {
+            $message = new XenForo_Phrase('ContactUs_Message_User', $input, false);
+        }
+
+        $threadDw = XenForo_DataWriter::create('XenForo_DataWriter_Discussion_Thread'); //, XenForo_DataWriter::ERROR_SILENT
+        $threadDw->setOption(XenForo_DataWriter_Discussion::OPTION_TRIM_TITLE, true);
+        $threadDw->bulkSet(array(
+            'user_id' => $user['user_id'],
+            'username' => $username,
+            'title' => $input['subject'],
+            'node_id' => $nodeId,
+            'discussion_state' => 'visible',
+            'prefix_id' => $default_prefix_id,
+        ));
+
+        $postWriter = $threadDw->getFirstMessageDw();
+        $postWriter->setOption(XenForo_DataWriter_DiscussionMessage::OPTION_VERIFY_GUEST_USERNAME, false);
+        $postWriter->set('message', $message);
+        $threadDw->save();
+        return $threadDw;
     }
 
     // Based off from XenForo_DataWriter_User::_verifyUsername
