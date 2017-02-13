@@ -20,6 +20,16 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         parent::_assertNotBanned();
     }
 
+    public function canUpdateSessionActivity($controllerName, $action, &$newState)
+    {
+        if (strtolower($action) == 'contact')
+        {
+            return true;
+        }
+
+        return parent::canUpdateSessionActivity($controllerName, $action, $newState);
+    }
+
     public function actionContact()
     {
         $options = XenForo_Application::getOptions();
