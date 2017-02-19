@@ -34,7 +34,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
     {
         $options = XenForo_Application::getOptions();
 
-        if ($options->sv_discardcontactusmessage && $this->_isDiscouraged())
+        if ($options->sv_discardcontactusmessage && $this->_request->isPost() && $this->_isDiscouraged())
         {
             return $this->responseRedirect(
                 XenForo_ControllerResponse_Redirect::SUCCESS,
