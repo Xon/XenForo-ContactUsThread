@@ -34,6 +34,15 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
     {
         $options = XenForo_Application::getOptions();
 
+        if ($options->sv_discardcontactusmessage && $this->_isDiscouraged())
+        {
+            return $this->responseRedirect(
+                XenForo_ControllerResponse_Redirect::SUCCESS,
+                $this->getDynamicRedirect(),
+                new XenForo_Phrase('your_message_has_been_sent')
+            );
+        }
+
         if ($options->contactUrl['type'] == 'custom')
         {
             return $this->responseRedirect(
@@ -79,7 +88,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         }
         return $parent;
     }
-    
+
     protected function sv_postThread($nodeId, $default_prefix_id, array $user, $username)
     {
         $options = XenForo_Application::getOptions();
