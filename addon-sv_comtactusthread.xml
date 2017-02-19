@@ -19,6 +19,7 @@
       <default_value>1</default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
+      <relation group_id="discourager" display_order="330"/>
       <relation group_id="sv_comtactusthread" display_order="110"/>
     </option>
     <option option_id="sv_contactusthread_node" edit_format="callback" data_type="unsigned_integer" can_backup="1">
@@ -50,6 +51,7 @@
       <default_value></default_value>
       <edit_format_params></edit_format_params>
       <sub_options></sub_options>
+      <relation group_id="discourager" display_order="320"/>
       <relation group_id="sv_comtactusthread" display_order="120"/>
     </option>
   </optiongroups>
