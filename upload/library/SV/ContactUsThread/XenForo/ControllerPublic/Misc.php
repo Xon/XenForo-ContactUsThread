@@ -77,6 +77,35 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                     $this->_verifyUsername($username);
                 }
                 $default_prefix_id = $forum['default_prefix_id'];
+
+                $this->assertNotFlooding('contact');
+                $this->blockFloodCheck = true;
+
+                if ($options->sv_contactus_spamCheck)
+                {
+                    // setup spam check
+                    $input = $this->_input->filter(array(
+                        'subject' => XenForo_Input::STRING,
+                        'message' => XenForo_Input::STRING,
+                        'email' => XenForo_Input::STRING,
+                    ));
+                    if (!empty($user['user_id']))
+                    {
+                        $input['email'] = $user['email'];
+                    }
+                    $input['message'] = $input['subject'] . "\n" . $input['message'];
+                    $visitor['username'] = $username;
+                    $visitor['email'] = $input['email'];
+                    $spamModel = $this->_getSpamPreventionModel();
+                    switch ($spamModel->checkMessageSpam($input['message'], array(), $this->_request))
+                    {
+                        case XenForo_Model_SpamPrevention::RESULT_MODERATED:
+                        case XenForo_Model_SpamPrevention::RESULT_DENIED;
+                            $spamModel->logSpamTrigger('contact_us', null);
+                            throw new XenForo_Exception(new XenForo_Phrase('your_content_cannot_be_submitted_try_later'), true);
+                            break;
+                    }
+                }
             }
         }
 
@@ -246,10 +275,16 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
         }
     }
 
+    protected $blockFloodCheck = false;
+
     public function assertNotFlooding($action, $floodingLimit = null)
     {
         if ($action == 'contact' && !XenForo_Visitor::getInstance()->hasPermission('general', 'bypassFloodCheck'))
         {
+            if ($this->blockFloodCheck)
+            {
+                return;
+            }
             $contactFloodingLimit = XenForo_Application::getOptions()->sv_contactusthread_ratelimit;
             if (!$contactFloodingLimit)
             {
