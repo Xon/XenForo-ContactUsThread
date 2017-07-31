@@ -81,6 +81,10 @@ Latest Spam Trigger Log Matches:
 
 Latest Spam Trigger Log Matches:
 {spam_trigger_logs}]]></phrase>
+    <phrase title="contact_us_flooding" version_id="1030000" version_string="1.3.0"><![CDATA[Do <b>not</b> resubmit, as you have already submitted content via this form.<br/>
+<br/>
+You must wait at least {count} seconds before trying again.
+]]></phrase>
     <phrase title="option_group_sv_comtactusthread" version_id="10000" version_string="1.0.0"><![CDATA[Contact Us Thread]]></phrase>
     <phrase title="option_group_sv_comtactusthread_description" version_id="10000" version_string="1.0.0"><![CDATA[]]></phrase>
     <phrase title="option_sv_banned_user_can_use_contactus_form" version_id="1000400" version_string="1.0.4"><![CDATA[Allow Banned Users to use Contact Us]]></phrase>

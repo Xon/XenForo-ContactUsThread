@@ -102,8 +102,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
                         case XenForo_Model_SpamPrevention::RESULT_MODERATED:
                         case XenForo_Model_SpamPrevention::RESULT_DENIED;
                             $spamModel->logSpamTrigger('contact_us', null);
-                            throw new XenForo_Exception(new XenForo_Phrase('your_content_cannot_be_submitted_try_later'), true);
-                            break;
+                            return $this->responseError(new XenForo_Phrase('your_content_cannot_be_submitted_try_later'));
                     }
                 }
             }
@@ -302,9 +301,7 @@ class SV_ContactUsThread_XenForo_ControllerPublic_Misc extends XFCP_SV_ContactUs
             $floodTimeRemaining = XenForo_Model_FloodCheck::checkFlooding($action, $contactFloodingLimit, $userId);
             if ($floodTimeRemaining)
             {
-                throw $this->responseException(
-                    $this->responseFlooding($floodTimeRemaining)
-                );
+                throw $this->responseException($this->responseError(new XenForo_Phrase('contact_us_flooding', array('count' => $floodTimeRemaining))));
             }
             return;
         }
